@@ -28,7 +28,7 @@
     </div>
   </div>
 </template>
-  
+
 <script>
 import { io } from "socket.io-client";
 
@@ -102,16 +102,20 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .chat-box {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
-  width: 80%;
+  width: 100%;
   margin-bottom: 10px;
-  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -129,14 +133,14 @@ export default {
 .bot-message {
   position: relative;
   display: block;
-  background-color: #ffffff;
+  background-color: #eeeeee;
   /* border: 1px solid #ddd; */
   border-radius: 5px;
   padding: 15px;
   margin: 0;
   min-height: 20px;
   line-height: 20px;
-  max-width: 70%;
+  max-width: 90%;
 }
 
 .bot-message::after {
@@ -146,7 +150,7 @@ export default {
   width: 15px;
   height: 15px;
   transform: rotate(45deg);
-  background-color: #ffffff;
+  background-color: #eeeeee;
 }
 
 .user-message {

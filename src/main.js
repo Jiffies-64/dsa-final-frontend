@@ -1,40 +1,55 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import { router } from './router'
 import store from './store'
-// import VueSocketIO from 'vue-socket.io'
-// import SocketIO from 'socket.io-client'
+import 'normalize.css/normalize.css'
+import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
-// import websocket from 'vue-native-websocket';
- 
-// Vue.use(websocket, '', {
-//     connectManually: true, // 手动连接
-//     format: 'json', // json格式
-//     reconnection: true, // 是否自动重连
-//     reconnectionAttempts: 5, // 自动重连次数
-//     reconnectionDelay: 2000, // 重连间隔时间
-// });
+import '@/styles/index.scss' // global css
+import './icons' // icon
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
+
+Vue.use(Element, {
+  size: 'medium' // set element-ui default size
+})
+
 Vue.config.productionTip = false
- 
-// const SOCKETIO = new VueSocketIO({
-//   debug: true, // true开启
-//   connection: SocketIO('http://127.0.0.1:5000/llm'), // 里面写socket服务器地址
-//   // 使用vuex
-//   vuex: {
-//     store,
-//     // 定义vuex函数的时候，用来区分普通函数还是socket函数。
-//     actionPrefix: 'SOCKET_',
-//     mutationPrefix: 'SOCKET_'
-//   },
-//   options: {
-//     autoConnect: false, // 关闭自动连接，一般是在用户登录过后才进行手动连接
-//   }
-// })
- 
-// Vue.use(SOCKETIO)
+
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
+
+router.beforeEach(async (to, from, next) => {
+  // start progress bar
+  NProgress.start()
+  if (to.meta.title !== undefined) {
+    document.title = to.meta.title
+  } else {
+    document.title = '\u200E'
+  }
+
+  if (to.meta.bodyBackground !== undefined) {
+    document.querySelector('body').setAttribute('style', 'background: ' + to.meta.bodyBackground)
+  } else {
+    document.querySelector('body').removeAttribute('style')
+  }
+
+  if (to.path) {
+    // eslint-disable-next-line no-undef
+    _hmt.push(['_trackPageview', '/#' + to.fullPath])
+  }
+  next()
+})
+
+router.afterEach((to, from, next) => {
+  // finish progress bar
+  NProgress.done()
+})
+
+Vue.prototype.$$router = router
 
 new Vue({
-  router,
-  store,
+  router: router,
+  store: store,
   render: h => h(App)
 }).$mount('#app')
