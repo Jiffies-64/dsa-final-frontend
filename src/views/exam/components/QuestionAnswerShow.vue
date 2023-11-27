@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import {mapState, mapGetters} from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'QuestionShow',
@@ -95,7 +95,7 @@ export default {
     answer: {
       type: Object,
       default: function () {
-        return {id: null, content: '', contentArray: [], doRight: false}
+        return { id: null, content: '', contentArray: [], doRight: false }
       }
     },
     qLoading: {
@@ -108,13 +108,13 @@ export default {
     }
   },
   methods: {
-    trueFalseFormatter(question) {
+    trueFalseFormatter (question) {
       return question.items.filter(d => d.prefix === question.correct)[0].content
     },
-    doRightTagFormatter(status) {
+    doRightTagFormatter (status) {
       return this.enumFormat(this.doRightTag, status)
     },
-    doRightTextFormatter(status) {
+    doRightTextFormatter (status) {
       return this.enumFormat(this.doRightEnum, status)
     }
   },

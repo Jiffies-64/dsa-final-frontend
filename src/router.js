@@ -5,9 +5,24 @@ import Layout from '@/layout'
 Vue.use(Router)
 const router = new Router({
   routes: [
-    { path: '/login', name: 'Login', component: () => import('@/views/login/index'), meta: { title: '登录', bodyBackground: '#fbfbfb' } },
-    { path: '/register', name: 'Register', component: () => import('@/views/register/index'), meta: { title: '注册', bodyBackground: '#fbfbfb' } },
-    { path: '/chat', name: 'Chat', component: () => import('@/components/LLM/ChatBox.vue') },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/login/index'),
+      meta: { title: '登录', bodyBackground: '#fbfbfb' }
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: () => import('@/views/register/index'),
+      meta: { title: '注册', bodyBackground: '#fbfbfb' }
+    },
+    {
+      path: '/chat',
+      name: 'Chat',
+      component: () => import('@/components/LLM/ChatBox.vue'),
+      meta: { title: 'DISC-LAW-LLM' }
+    },
     {
       path: '/',
       component: Layout,
@@ -82,9 +97,20 @@ const router = new Router({
       ]
     },
     { path: '/do', name: 'ExamPaperDo', component: () => import('@/views/exam/paper/do'), meta: { title: '试卷答题' } },
-    { path: '/edit', name: 'ExamPaperEdit', component: () => import('@/views/exam/paper/edit'), meta: { title: '试卷批改' } },
-    { path: '/read', name: 'ExamPaperRead', component: () => import('@/views/exam/paper/read'), meta: { title: '试卷查看' } },
-    { path: '*', component: () => import('@/views/error-page/404'), meta: { title: '404' }
+    {
+      path: '/edit',
+      name: 'ExamPaperEdit',
+      component: () => import('@/views/exam/paper/edit'),
+      meta: { title: '试卷批改' }
+    },
+    {
+      path: '/read',
+      name: 'ExamPaperRead',
+      component: () => import('@/views/exam/paper/read'),
+      meta: { title: '试卷查看' }
+    },
+    {
+      path: '*', component: () => import('@/views/error-page/404'), meta: { title: '404' }
     }
   ]
 })

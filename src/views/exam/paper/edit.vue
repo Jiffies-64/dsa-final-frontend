@@ -58,7 +58,7 @@
         </el-col>
         <el-col :span="9"> <!-- 这里设置 offset 为 1，使得右侧列与左侧有间隔 -->
           <div class="chat-box">
-            <ChatBox></ChatBox>
+            <ChatBox :quickSelections="form.titleItems"></ChatBox>
           </div>
         </el-col>
       </el-row>
@@ -67,15 +67,15 @@
 </template>
 
 <script>
-import {mapState, mapGetters} from 'vuex'
-import {formatSeconds} from '@/utils'
+import { mapState, mapGetters } from 'vuex'
+import { formatSeconds } from '@/utils'
 import QuestionAnswerShow from '../components/QuestionAnswerShow'
 import examPaperAnswerApi from '@/api/examPaperAnswer'
-import ChatBox from "@/components/LLM/ChatBox.vue";
+import ChatBox from '@/components/LLM/ChatBox.vue'
 
 export default {
-  components: {ChatBox, QuestionAnswerShow},
-  data() {
+  components: { ChatBox, QuestionAnswerShow },
+  data () {
     return {
       form: {},
       formLoading: false,
@@ -88,7 +88,7 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     let id = this.$route.query.id
     let _this = this
     if (id && parseInt(id) !== 0) {
@@ -101,7 +101,7 @@ export default {
     }
   },
   methods: {
-    submitForm() {
+    submitForm () {
       let _this = this
       _this.formLoading = true
       examPaperAnswerApi.edit(this.answer).then(re => {
@@ -120,7 +120,7 @@ export default {
         _this.formLoading = false
       })
     },
-    scoreSelect(score) {
+    scoreSelect (score) {
       let array = []
       for (let i = 0; i <= parseInt(score); i++) {
         array.push(i.toString())
@@ -130,14 +130,14 @@ export default {
       }
       return array
     },
-    formatSeconds(theTime) {
+    formatSeconds (theTime) {
       return formatSeconds(theTime)
     },
-    questionDoRightTag(status) {
+    questionDoRightTag (status) {
       return this.enumFormat(this.doRightTag, status)
     },
-    goAnchor(selector) {
-      this.$el.querySelector(selector).scrollIntoView({behavior: 'instant', block: 'center', inline: 'nearest'})
+    goAnchor (selector) {
+      this.$el.querySelector(selector).scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
     }
   },
   computed: {

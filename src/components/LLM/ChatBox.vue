@@ -3,9 +3,9 @@
     <div>连接状态：{{ connected }}</div>
     <div class="chat-box" id="llm-response">
       <ul
-        v-for="(message, index) in chatMessages"
-        :key="index"
-        class="chat-message"
+          v-for="(message, index) in chatMessages"
+          :key="index"
+          class="chat-message"
       >
         <li v-if="message.role === 'user'" class="flex-right">
           <p class="user-message">{{ message.content }}</p>
@@ -15,16 +15,27 @@
         </li>
       </ul>
     </div>
+    <div class="label-container">
+      <span v-for="(tItem, tIndex) in quickSelections" :key="tIndex">
+        <span v-for="(qItem, index) in tItem.questionItems" :key="index">
+         <el-tag :type="(chosenQuestion && qItem.id === chosenQuestion.id) ? 'success' : 'info'"
+                 class="quick-selection-label"
+                 :id="'quick-selection-label-' + qItem.id"
+                 @click="addQuestionToRequest(qItem)"
+         >{{ qItem.itemOrder }}</el-tag>
+        </span>
+      </span>
+    </div>
     <div class="input-container">
       <input
-        type="text"
-        v-model="inpurText"
-        @keyup.enter="sendMessage"
-        class="message-input"
-        placeholder="Type your message here"
+          type="text"
+          v-model="inputBoxText"
+          @keyup.enter="sendMessage"
+          class="message-input"
+          placeholder="Type your message here"
       />
       <button @click="sendMessage" :disabled="!connected || generating" class="send-button">
-        {{ generating ? "Waiting" : "Send" }}
+        {{ generating ? 'Waiting' : 'Send' }}
       </button>
     </div>
   </div>
@@ -34,71 +45,91 @@
 import { io } from 'socket.io-client'
 
 export default {
-  data() {
+  props: {
+    quickSelections: Array
+  },
+  data () {
     return {
-      chatMessages: [{ role: "robot", content: "Hello! What can I do for U?" }],
-      inpurText: "",
+      chatMessages: [{ role: 'robot', content: 'Hello! What can I do for U?' }],
+      chosenQuestion: Object,
+      inputBoxText: '',
       connected: false,
       generating: false,
       socket: null,
-    };
+    }
+  },
+  computed: {
+    completeInput: function () {
+      let prefix = ''
+      if (this.chosenQuestion) {
+        prefix = '这里有一道法律相关题目，题干为：' + this.chosenQuestion.title + '请基于该题目回答以下问题：'
+      }
+      return prefix + this.inputBoxText
+    }
   },
   methods: {
-    sendMessage() {
-      if(this.inputText !== '') {
-        this.chatMessages.push({ role: "user", content: this.inpurText });
-        this.socket.emit("prompt", { message: this.chatMessages.filter(x => x.role === "user") });
-        // this.socket.emit("message", { message: this.chatMessages.filter(x => x.role === "user") });
-        this.inpurText = "";
-        this.generating = true;
+    addQuestionToRequest (qItem) {
+      if (this.chosenQuestion && this.chosenQuestion.id === qItem.id) {
+        this.chosenQuestion = null
+        return
+      }
+      this.chosenQuestion = qItem
+    },
+    sendMessage () {
+      if (this.inputText !== '') {
+        this.chatMessages.push({ role: 'user', content: this.completeInput })
+        this.socket.emit('prompt', { message: this.chatMessages.filter(x => x.role === 'user') })
+        this.inputBoxText = ''
+        this.completeInput = ''
+        this.generating = true
       }
     },
-    handleMessage(msg) {
-      if (msg === "<Start>") {
-        this.chatMessages.push({ role: "robot", content: "" });
-      } else if (msg === "<End>") {
-        this.generating = false;
+    handleMessage (msg) {
+      if (msg === '<Start>') {
+        this.chatMessages.push({ role: 'robot', content: '' })
+      } else if (msg === '<End>') {
+        this.generating = false
         return
-      } else if (msg === "<Irpt>") {
-        this.chatMessages[this.chatMessages.length - 1].content += '...';
-        this.generating = false;
+      } else if (msg === '<Irpt>') {
+        this.chatMessages[this.chatMessages.length - 1].content += '...'
+        this.generating = false
       } else {
-        this.chatMessages[this.chatMessages.length - 1].content += msg;
+        this.chatMessages[this.chatMessages.length - 1].content += msg
       }
     },
   },
-  mounted() {
+  mounted () {
     // 连接socket
-    this.socket = io("http://127.0.0.1:8000/llm", {
-      transports: ["websocket"],
-    });
+    this.socket = io('http://127.0.0.1:8000/llm', {
+      transports: ['websocket'],
+    })
 
     // 监听连接成功的事件
     this.socket.on('connect', () => {
-      this.connected = true;
-      console.log("connected!");
-    });
+      this.connected = true
+      console.log('connected!')
+    })
 
     // 设置监听
-    this.socket.on("response", (data) => {
-      console.log("received!!");
-      this.handleMessage(data.message);
-    });
+    this.socket.on('response', (data) => {
+      console.log('received!!')
+      this.handleMessage(data.message)
+    })
 
     // // 设置心跳
     // setInterval(() => {
     //   this.socket.connect();
     // }, 5000);
   },
-  beforeDestroy() {
+  beforeDestroy () {
     // 在组件销毁前关闭WebSocket连接
     if (this.socket) {
-      this.socket.close();
-      this.connected = false;
+      this.socket.close()
+      this.connected = false
     }
-    this.socket = null;
+    this.socket = null
   },
-};
+}
 </script>
 
 <style>
@@ -161,7 +192,7 @@ export default {
 .user-message {
   position: relative;
   display: block;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(213, 225, 241);
   border-radius: 5px;
   padding: 15px;
   margin: 0;
@@ -177,7 +208,7 @@ export default {
   width: 15px;
   height: 15px;
   transform: rotate(45deg);
-  background-color: #ffffff;
+  background-color: rgb(213, 225, 241);
 }
 
 .flex-right {
@@ -218,5 +249,18 @@ export default {
 
 p {
   word-wrap: anywhere;
+}
+
+.label-container {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.quick-selection-label {
+  margin: 5px;
+}
+
+.quick-selection-label:hover {
+  cursor: pointer;
 }
 </style>
