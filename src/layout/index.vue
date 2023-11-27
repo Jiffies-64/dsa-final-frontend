@@ -36,15 +36,21 @@
       <div class="foot-container">
         <div class="footer-main">
           <h4>更多信息</h4>
-          <a href="https://github.com/Jiffies-64/dsa-final-frontend" target="_blank" class="footer-main-link">前端仓库</a>
-          <a href="https://github.com/Jiffies-64/dsa-final-backend" target="_blank" class="footer-main-link">后端仓库</a>
-          <a href="https://jhiu583gze.feishu.cn/docx/SDUydmnn8oAmwzxGxx1c2u77npe" target="_blank" class="footer-main-link">概要设计文档</a>
+          <a href="https://github.com/Jiffies-64/dsa-final-frontend" target="_blank"
+             class="footer-main-link">前端仓库</a>
+          <a href="https://github.com/Jiffies-64/dsa-final-backend" target="_blank"
+             class="footer-main-link">后端仓库</a>
+          <a href="https://jhiu583gze.feishu.cn/docx/SDUydmnn8oAmwzxGxx1c2u77npe" target="_blank"
+             class="footer-main-link">概要设计文档</a>
         </div>
         <div class="footer-main">
           <h4>参考资料</h4>
-          <a href="https://github.com/FudanDISC/DISC-LawLLM" target="_blank" class="footer-main-link">[Github] DISC-LawLLM (https://github.com/FudanDISC/DISC-LawLLM)</a>
-          <a href="https://github.com/yuelinan/FedJudge" target="_blank" class="footer-main-link">[Github] FedJudge (https://github.com/yuelinan/FedJudge)</a>
-          <a href="https://github.com/AndrewZhe/lawyer-llama" target="_blank" class="footer-main-link">[Github] lawyer-llama (https://github.com/AndrewZhe/lawyer-llama)</a>
+          <a href="https://github.com/FudanDISC/DISC-LawLLM" target="_blank" class="footer-main-link">[Github]
+            DISC-LawLLM (https://github.com/FudanDISC/DISC-LawLLM)</a>
+          <a href="https://github.com/yuelinan/FedJudge" target="_blank" class="footer-main-link">[Github] FedJudge
+            (https://github.com/yuelinan/FedJudge)</a>
+          <a href="https://github.com/AndrewZhe/lawyer-llama" target="_blank" class="footer-main-link">[Github]
+            lawyer-llama (https://github.com/AndrewZhe/lawyer-llama)</a>
         </div>
       </div>
     </el-footer>
@@ -55,13 +61,13 @@
 </template>
 
 <script>
-import {mapActions, mapMutations, mapState} from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import loginApi from '@/api/login'
 import userApi from '@/api/user'
 
 export default {
   name: 'Layout',
-  data() {
+  data () {
     return {
       defaultUrl: '/index',
       userInfo: {
@@ -69,33 +75,33 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     let _this = this
     this.defaultUrl = this.routeSelect(this.$route.path)
     // this.getUserMessageInfo()
-    userApi.getCurrentUser({'user_name': this.studentUserName}).then(re => {
+    userApi.getCurrentUser({ 'user_name': this.studentUserName }).then(re => {
       _this.userInfo = re.response
     })
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       this.defaultUrl = this.routeSelect(to.path)
     }
   },
   methods: {
-    routeSelect(path) {
+    routeSelect (path) {
       let topPath = ['/', '/index', '/paper/index', '/record/index', '/question/index']
       if (topPath.indexOf(path)) {
         return path
       }
       return null
     },
-    logout() {
+    logout () {
       let _this = this
       loginApi.logout().then(function (result) {
         if (result && result.code === 1) {
           _this.clearLogin()
-          _this.$router.push({path: '/login'})
+          _this.$router.push({ path: '/login' })
         }
       })
     },
@@ -103,7 +109,7 @@ export default {
     ...mapMutations('user', ['clearLogin'])
   },
   computed: {
-    ...mapState('user', {messageCount: state => state.messageCount}),
+    ...mapState('user', { messageCount: state => state.messageCount }),
     ...mapState('user', ['studentUserName'])
   }
 }

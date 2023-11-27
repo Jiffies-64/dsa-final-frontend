@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import {mapState, mapGetters} from 'vuex'
-import {formatSeconds} from '@/utils'
+import { mapState, mapGetters } from 'vuex'
+import { formatSeconds } from '@/utils'
 import QuestionAnswerShow from '../components/QuestionAnswerShow'
 import examPaperAnswerApi from '@/api/examPaperAnswer'
 
 export default {
-  components: {QuestionAnswerShow},
-  data() {
+  components: { QuestionAnswerShow },
+  data () {
     return {
       form: {},
       formLoading: false,
@@ -63,7 +63,7 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     let id = this.$route.query.id
     let _this = this
     if (id && parseInt(id) !== 0) {
@@ -76,14 +76,14 @@ export default {
     }
   },
   methods: {
-    formatSeconds(theTime) {
+    formatSeconds (theTime) {
       return formatSeconds(theTime)
     },
-    questionDoRightTag(status) {
+    questionDoRightTag (status) {
       return this.enumFormat(this.doRightTag, status)
     },
-    goAnchor(selector) {
-      this.$el.querySelector(selector).scrollIntoView({behavior: 'instant', block: 'center', inline: 'nearest'})
+    goAnchor (selector) {
+      this.$el.querySelector(selector).scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
     }
   },
   computed: {

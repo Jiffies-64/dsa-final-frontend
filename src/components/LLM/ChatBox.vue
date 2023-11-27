@@ -1,5 +1,6 @@
 <template>
   <div class="chat-container">
+    <div>连接状态：{{ connected }}</div>
     <div class="chat-box" id="llm-response">
       <ul
         v-for="(message, index) in chatMessages"
@@ -22,39 +23,45 @@
         class="message-input"
         placeholder="Type your message here"
       />
-      <button @click="sendMessage" :disabled="!connected" class="send-button">
-        {{ connected ? "Send" : "Waiting" }}
+      <button @click="sendMessage" :disabled="!connected || generating" class="send-button">
+        {{ generating ? "Waiting" : "Send" }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client'
 
 export default {
   data() {
     return {
       chatMessages: [{ role: "robot", content: "Hello! What can I do for U?" }],
-      inpurText: "Please input...",
+      inpurText: "",
       connected: false,
+      generating: false,
       socket: null,
     };
   },
   methods: {
     sendMessage() {
-      this.chatMessages.push({ role: "user", content: this.inpurText });
-      this.socket.emit("prompt", { message: this.chatMessages.filter(x => x.role === "user") });
-      // this.socket.emit("message", { message: this.chatMessages.filter(x => x.role === "user") });
-      this.inpurText = "";
+      if(this.inputText !== '') {
+        this.chatMessages.push({ role: "user", content: this.inpurText });
+        this.socket.emit("prompt", { message: this.chatMessages.filter(x => x.role === "user") });
+        // this.socket.emit("message", { message: this.chatMessages.filter(x => x.role === "user") });
+        this.inpurText = "";
+        this.generating = true;
+      }
     },
     handleMessage(msg) {
       if (msg === "<Start>") {
         this.chatMessages.push({ role: "robot", content: "" });
       } else if (msg === "<End>") {
+        this.generating = false;
         return
       } else if (msg === "<Irpt>") {
         this.chatMessages[this.chatMessages.length - 1].content += '...';
+        this.generating = false;
       } else {
         this.chatMessages[this.chatMessages.length - 1].content += msg;
       }
@@ -62,17 +69,15 @@ export default {
   },
   mounted() {
     // 连接socket
-    this.socket = io("http://127.0.0.1:5000/llm", {
-      transports: ["websocket"], // 指定传输方式，如WebSocket
-      // autoConnect: true, // 是否自动连接
-      // reconnection: true, // 是否自动重新连接
-      // reconnectionAttempts: 3, // 重新连接尝试次数
-      // reconnectionDelay: 1000, // 重新连接延迟时间（毫秒）
-      // query: { token: "your-token" }, // 自定义查询参数
-      // 其他可选参数...
+    this.socket = io("http://127.0.0.1:8000/llm", {
+      transports: ["websocket"],
     });
-    this.connected = true;
-    console.log("connected!");
+
+    // 监听连接成功的事件
+    this.socket.on('connect', () => {
+      this.connected = true;
+      console.log("connected!");
+    });
 
     // 设置监听
     this.socket.on("response", (data) => {
@@ -80,10 +85,10 @@ export default {
       this.handleMessage(data.message);
     });
 
-    // 设置心跳
-    setInterval(() => {
-      this.socket.connect();
-    }, 5000);
+    // // 设置心跳
+    // setInterval(() => {
+    //   this.socket.connect();
+    // }, 5000);
   },
   beforeDestroy() {
     // 在组件销毁前关闭WebSocket连接
