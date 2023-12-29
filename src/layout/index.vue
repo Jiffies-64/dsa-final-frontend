@@ -179,8 +179,9 @@ export default {
       if (msg === '<Start>') {
         this.chatMessages.push({ role: 'robot', content: '' })
       } else if (msg === '<End>') {
-        let str = this.chatMessages[this.chatMessages.length - 1].content.split("/n")
+        let str = this.chatMessages[this.chatMessages.length - 1].content.split("\n")
         this.problem = str[0]
+        console.log(str)
         if (str[1].search("正确")) {
           this.answer = true
         } else {
